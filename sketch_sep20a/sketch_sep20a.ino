@@ -20,9 +20,9 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
-const char* staender = "ständer1";
+const char* staender = "smike/UNI1/frei";
 
-//############################################################################
+//###########################################################################
 
 void setup() {
   pinMode(taster, INPUT_PULLUP);
@@ -88,7 +88,7 @@ void loop () {
     Serial.println("Fahrrad da");
     digitalWrite(led_rot, HIGH);
     digitalWrite(led_gruen, LOW);
-    snprintf (msg, 50, "Rad1_belegt", tasterstatus);
+    snprintf (msg, 50, "4");
     Serial.print("Publish message: ");
     Serial.println(msg);
     client.publish(staender, msg, true);
@@ -101,7 +101,7 @@ void loop () {
       Serial.println("Fahrrad frei");
       digitalWrite(led_gruen, HIGH);
       digitalWrite(led_rot, LOW);    
-      snprintf (msg, 50, "Rad1_frei", tasterstatus);
+      snprintf (msg, 50, "5");
       Serial.print("Publish message: ");
       Serial.println(msg);
       client.publish(staender, msg, true);
