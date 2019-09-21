@@ -15,7 +15,7 @@ const int led_rot= 4; //pin D2
 const int led_gruen = 14; //pin D5 
 const int led_blau = 15; //pin D8
 int tasterstatus = 0; //Variable für tastererkennung
-int zustand = 0; //Variable für den zustand des wlans
+int letzter_status =-1; 
 const char* SSID = "Forum";
 const char* PASSWORD = "Hack2019";
 const char* MQTT_BROKER = "172.16.0.1";
@@ -24,6 +24,7 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
+const char* staender = "1";
 
 //############################################################################
 
@@ -63,7 +64,7 @@ void reconnect() {
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish("Rad1", "verbunden");
+      client.publish(staender, "verbunden");
       // ... and resubscribe
       client.subscribe("inTopic");
     } else {
@@ -84,31 +85,30 @@ void loop () {
   delay(1000);
   digitalWrite(led_blau, LOW);
   tasterstatus = digitalRead(taster); 
-  if (tasterstatus == HIGH) {
-    Serial.println("Kein Fahrrad da");
-    digitalWrite(led_rot, LOW);
-    digitalWrite(led_gruen, HIGH);
-    snprintf (msg, 50, "Rad1_frei", tasterstatus);
-    Serial.print("Publish message: ");
-    Serial.println(msg);
-    client.publish("Fahrradstaender/1", msg);    
+  if ((tasterstatus == HIGH)&&(letzter_status == 0)) {
+    Serial.println("Nichts zu tun, frei");
   }
-  else {
-    Serial.println("Fahrrad drin");
-    digitalWrite(led_gruen, LOW);
+  else if((tasterstatus == LOW)&&(letzter_status == 0 || letzter_status == -1)){
+    Serial.println("Fahrrad da");
     digitalWrite(led_rot, HIGH);
-    //if (zustand == 0) {
-      //Serial.println("Wlan wird aktiviert");
-       //if ((WiFi.run() == WL_CONNECTED)) {
-          //WiFiClient client; //hier das Paket verschicken!
-         // Serial.println("Wlan aktiv");
-          //zustand = 1;
-       //}
-     
-    //}
+    digitalWrite(led_gruen, LOW);
     snprintf (msg, 50, "Rad1_belegt", tasterstatus);
     Serial.print("Publish message: ");
     Serial.println(msg);
-    client.publish("Fahrradstaender/1", msg);
+    client.publish(staender, msg);
+    letzter_status = 1;    
+  }
+  if ((tasterstatus == LOW)&&(letzter_status == 1)) {
+    Serial.println("Nichts zu tun, belegt");
+  }
+  else if ((tasterstatus == HIGH)&&(letzter_status == 1 || letzter_status == -1)){
+      Serial.println("Fahrrad frei");
+      digitalWrite(led_gruen, HIGH);
+      digitalWrite(led_rot, LOW);    
+      snprintf (msg, 50, "Rad1_frei", tasterstatus);
+      Serial.print("Publish message: ");
+      Serial.println(msg);
+      client.publish(staender, msg);
+      letzter_status = 0;
   }
 }
