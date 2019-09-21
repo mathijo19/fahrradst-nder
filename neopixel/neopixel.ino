@@ -27,6 +27,7 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
+int farbe = 2;
 
 void reconnect() {
   // Loop until we're reconnected
@@ -59,6 +60,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print((char)payload[i]);
   }
   Serial.println();
+  if((String((char)payload[0]))== "4"){
+    farbe = 1;
+    Serial.println("rot angekommen");
+  }
+  else if((String((char)payload[0]))== "5"){
+    farbe = 3;
+    Serial.print("gruen angekommen");
+  }
 }
 
 
@@ -93,12 +102,22 @@ void setup() {
 void loop() {
   pixels.clear(); // Set all pixel colors to 'off'
   Serial.println("loop");
-  client.loop();
   for(int i=0; i<NUMPIXELS; i++) {
     // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
-    // Here we're using a moderately bright green color:
-    pixels.setPixelColor(i, pixels.Color(0, 150, 0));
+    if(farbe == 3){
+      pixels.setPixelColor(i, pixels.Color(0, 150, 0));
+      Serial.println("gruen");
+    }
+    else if (farbe == 2){
+      pixels.setPixelColor(i, pixels.Color(255, 255, 0));
+      Serial.println("gelb");
+    }
+    else if (farbe == 1){
+      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+      Serial.println("rot");
+    }
     Serial.println("zeige Farbe");
+    client.loop();
     pixels.show();   // Send the updated pixel colors to the hardware.
 
     delay(DELAYVAL); // Pause before next pass through loop
