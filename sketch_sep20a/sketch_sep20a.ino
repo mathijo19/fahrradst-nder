@@ -63,7 +63,7 @@ void reconnect() {
     if (client.connect(clientId.c_str())) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      client.publish("outTopic", "hello world");
+      client.publish("Rad1", "verbunden");
       // ... and resubscribe
       client.subscribe("inTopic");
     } else {
