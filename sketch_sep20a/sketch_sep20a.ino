@@ -20,7 +20,7 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
-const char* staender = "fahrradständer1";
+const char* staender = "ständer1";
 
 //############################################################################
 
