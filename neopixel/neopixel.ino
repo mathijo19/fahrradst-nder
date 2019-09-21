@@ -27,7 +27,31 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
+int farbe = 2;
 
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Attempt to connect
+    if (client.connect("espClient")) {
+      Serial.println("connected");
+      // Once connected, publish an announcement...
+      client.publish("ampel","nummer1 lebt");
+      // ... and resubscribe
+      client.subscribe("smike/#");
+      if(client.subscribe("test")){
+        Serial.println("sub erfolgreich");
+      }
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
+  }
+}
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -36,6 +60,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print((char)payload[i]);
   }
   Serial.println();
+  if((String((char)payload[0]))== "4"){
+    farbe = 1;
+    Serial.println("rot angekommen");
+  }
+  else if((String((char)payload[0]))== "5"){
+    farbe = 3;
+    Serial.print("gruen angekommen");
+  }
 }
 
 
@@ -57,11 +89,12 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-
   
   client.setServer(MQTT_BROKER, 1883);
   client.setCallback(callback);
-  delay(1500);
+  delay(500);
+ 
+  reconnect();
   
   Serial.println("Setup beendet");
 }
@@ -71,33 +104,22 @@ void loop() {
   Serial.println("loop");
   for(int i=0; i<NUMPIXELS; i++) {
     // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
-    // Here we're using a moderately bright green color:
-    pixels.setPixelColor(i, pixels.Color(0, 150, 0));
+    if(farbe == 3){
+      pixels.setPixelColor(i, pixels.Color(0, 150, 0));
+      Serial.println("gruen");
+    }
+    else if (farbe == 2){
+      pixels.setPixelColor(i, pixels.Color(255, 255, 0));
+      Serial.println("gelb");
+    }
+    else if (farbe == 1){
+      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+      Serial.println("rot");
+    }
     Serial.println("zeige Farbe");
+    client.loop();
     pixels.show();   // Send the updated pixel colors to the hardware.
 
     delay(DELAYVAL); // Pause before next pass through loop
-  }
-}
-
-
-void reconnect() {
-  // Loop until we're reconnected
-  while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
-    // Attempt to connect
-    if (client.connect("arduinoClient")) {
-      Serial.println("connected");
-      // Once connected, publish an announcement...
-      client.publish("outTopic","hello world");
-      // ... and resubscribe
-      client.subscribe("inTopic");
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
-    }
   }
 }
