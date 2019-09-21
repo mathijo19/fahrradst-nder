@@ -4,11 +4,7 @@
 #include <ESP8266WiFi.h>
 
 
-
-
 #include <PubSubClient.h>
-
-
 
 const int taster =  5; //pin D1
 const int led_rot= 4; //pin D2
@@ -24,7 +20,7 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
-const char* staender = "1";
+const char* staender = "fahrradständer1";
 
 //############################################################################
 
@@ -95,7 +91,7 @@ void loop () {
     snprintf (msg, 50, "Rad1_belegt", tasterstatus);
     Serial.print("Publish message: ");
     Serial.println(msg);
-    client.publish(staender, msg);
+    client.publish(staender, msg, true);
     letzter_status = 1;    
   }
   if ((tasterstatus == LOW)&&(letzter_status == 1)) {
@@ -108,7 +104,7 @@ void loop () {
       snprintf (msg, 50, "Rad1_frei", tasterstatus);
       Serial.print("Publish message: ");
       Serial.println(msg);
-      client.publish(staender, msg);
+      client.publish(staender, msg, true);
       letzter_status = 0;
   }
 }
