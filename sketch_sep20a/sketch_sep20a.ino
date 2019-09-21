@@ -1,4 +1,14 @@
 
+#include <Arduino.h>
+
+#include <ESP8266WiFi.h>
+#include <ESP8266WiFiMulti.h>
+
+#include <ESP8266HTTPClient.h>
+
+#include <WiFiClient.h>
+
+ESP8266WiFiMulti WiFiMulti;
 const int taster =  5; //pin D1
 const int led_rot= 4; //pin D2
 const int led_gruen = 14; //pin D5 
@@ -8,6 +18,8 @@ int zustand = 0; //Variable für den zustand des wlans
 const char* SSID = "Forum";
 const char* PASSWORD = "Hack2019";
 const char* MQTT_BROCKER = "172.16.0.1";
+
+//############################################################################
 
 void setup() {
   pinMode(taster, INPUT_PULLUP);
@@ -20,6 +32,7 @@ void setup() {
   WiFiMulti.addAP(SSID, PASSWORD);
 }
 void loop () {
+  delay(1000);
   digitalWrite(led_blau, LOW);
   tasterstatus = digitalRead(taster); 
   if (tasterstatus == HIGH) {
@@ -32,14 +45,12 @@ void loop () {
     digitalWrite(led_gruen, LOW);
     digitalWrite(led_rot, HIGH);
     if (zustand == 0) {
+      Serial.println("Wlan wird aktiviert");
        if ((WiFiMulti.run() == WL_CONNECTED)) {
           WiFiClient client; //hier das Paket verschicken!
           Serial.println("Wlan aktiv");
-          zustand = 1
-    else {
-      
-    }
-    }
+          zustand = 1;
+       }
      
     }
   }
