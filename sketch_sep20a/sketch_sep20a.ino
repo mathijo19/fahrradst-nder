@@ -8,6 +8,7 @@
 
 const int taster =  5; //pin D1
 const int taster2 = 12;//pin D6
+
 const int led_rot= 4; //pin D2
 const int led_gruen = 14; //pin D5 
 const int led_blau = 15; //pin D8
@@ -23,8 +24,8 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
-const char* staender = "smike/UNI1/1/frei";
-const char* staender2 = "smike/UNI1/2/frei";
+const char* staender = "smike/UNI1/frei";
+const char* staender2 = "smike/UNI1/frei";
 
 //###########################################################################
 
@@ -93,11 +94,16 @@ void loop () {
     Serial.println("Fahrrad da");
     digitalWrite(led_rot, HIGH);
     digitalWrite(led_gruen, LOW);
-    snprintf (msg, 50, "4");
+    letzter_status = 1;
+    if (letzter_status2 == 1) {
+      snprintf (msg, 50, "3");    
+    }
+    else {
+      snprintf (msg, 50, "4");
+    }
     Serial.print("Publish message: ");
     Serial.println(msg);
-    client.publish(staender, msg, true);
-    letzter_status = 1;    
+    client.publish(staender, msg, true);    
   }
   if ((tasterstatus == LOW)&&(letzter_status == 1)) {
     Serial.println("Nichts zu tun, belegt");
@@ -105,8 +111,13 @@ void loop () {
   else if ((tasterstatus == HIGH)&&(letzter_status == 1 || letzter_status == -1)){
       Serial.println("Fahrrad frei");
       digitalWrite(led_gruen, HIGH);
-      digitalWrite(led_rot, LOW);    
-      snprintf (msg, 50, "5");
+      digitalWrite(led_rot, LOW);
+      if (letzter_status2 == 1) {
+         snprintf (msg, 50, "4");
+      }
+      else {
+        snprintf (msg, 50, "5");
+      }
       Serial.print("Publish message: ");
       Serial.println(msg);
       client.publish(staender, msg, true);
@@ -122,7 +133,12 @@ void loop () {
     Serial.println("Fahrrad da");
     digitalWrite(led_rot, HIGH);
     digitalWrite(led_gruen, LOW);
-    snprintf (msg, 50, "4");
+    if (letzter_status == 1) {
+    snprintf (msg, 50, "3");
+    }
+    else {
+      snprintf (msg, 50, "4");
+    }
     Serial.print("Publish message: ");
     Serial.println(msg);
     client.publish(staender2, msg, true);
@@ -134,8 +150,13 @@ void loop () {
   else if ((tasterstatus2 == HIGH)&&(letzter_status2 == 1 || letzter_status2 == -1)){
       Serial.println("Fahrrad frei");
       digitalWrite(led_gruen, HIGH);
-      digitalWrite(led_rot, LOW);    
-      snprintf (msg, 50, "5");
+      digitalWrite(led_rot, LOW); 
+      if (letzter_status == 1) {   
+      snprintf (msg, 50, "4");
+      }
+      else {
+        snprintf (msg, 50, "5");
+      }
       Serial.print("Publish message: ");
       Serial.println(msg);
       client.publish(staender2, msg, true);
