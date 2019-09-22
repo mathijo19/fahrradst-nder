@@ -92,13 +92,17 @@ void loop () {
   }
   else if((tasterstatus == LOW)&&(letzter_status == 0 || letzter_status == -1)){
     Serial.println("Fahrrad da");
-    digitalWrite(led_rot, HIGH);
-    digitalWrite(led_gruen, LOW);
     letzter_status = 1;
     if (letzter_status2 == 1) {
+      digitalWrite(led_rot, HIGH);
+      digitalWrite(led_gruen, LOW);
+      digitalWrite(led_blau, LOW);
       snprintf (msg, 50, "3");    
     }
     else {
+      digitalWrite(led_rot, HIGH);
+      digitalWrite(led_gruen, HIGH);
+      digitalWrite(led_blau, LOW);
       snprintf (msg, 50, "4");
     }
     Serial.print("Publish message: ");
@@ -114,9 +118,15 @@ void loop () {
       digitalWrite(led_rot, LOW);
       if (letzter_status2 == 1) {
          snprintf (msg, 50, "4");
+         digitalWrite(led_rot, HIGH);
+         digitalWrite(led_gruen, HIGH);
+         digitalWrite(led_blau, LOW);
       }
       else {
         snprintf (msg, 50, "5");
+        digitalWrite(led_rot, LOW);
+        digitalWrite(led_gruen, HIGH);
+        digitalWrite(led_blau, LOW);
       }
       Serial.print("Publish message: ");
       Serial.println(msg);
@@ -134,10 +144,16 @@ void loop () {
     digitalWrite(led_rot, HIGH);
     digitalWrite(led_gruen, LOW);
     if (letzter_status == 1) {
-    snprintf (msg, 50, "3");
+      snprintf (msg, 50, "3");
+      digitalWrite(led_rot, HIGH);
+      digitalWrite(led_gruen, LOW);
+      digitalWrite(led_blau, LOW);
     }
     else {
       snprintf (msg, 50, "4");
+      digitalWrite(led_rot, HIGH);
+      digitalWrite(led_gruen, HIGH);
+      digitalWrite(led_blau, LOW);
     }
     Serial.print("Publish message: ");
     Serial.println(msg);
@@ -152,10 +168,16 @@ void loop () {
       digitalWrite(led_gruen, HIGH);
       digitalWrite(led_rot, LOW); 
       if (letzter_status == 1) {   
-      snprintf (msg, 50, "4");
+        snprintf (msg, 50, "4");
+        digitalWrite(led_rot, HIGH);
+        digitalWrite(led_gruen, HIGH);
+        digitalWrite(led_blau, LOW);
       }
       else {
         snprintf (msg, 50, "5");
+        digitalWrite(led_rot, LOW);
+        digitalWrite(led_gruen, HIGH);
+        digitalWrite(led_blau, LOW);
       }
       Serial.print("Publish message: ");
       Serial.println(msg);
