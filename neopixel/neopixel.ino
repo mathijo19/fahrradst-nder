@@ -117,7 +117,7 @@ void loop() {
       Serial.println("gruen");
     }
     else if (farbe == 2){
-      pixels.setPixelColor(i, pixels.Color(255, 255, 0));
+      pixels.setPixelColor(i, pixels.Color(255, 128, 0));
       Serial.println("gelb");
     }
     else if (farbe == 1){
