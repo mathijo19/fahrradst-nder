@@ -27,7 +27,7 @@ PubSubClient client(espClient);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
-int farbe = 2;
+int farbe = 4;
 
 void reconnect() {
   // Loop until we're reconnected
@@ -60,9 +60,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print((char)payload[i]);
   }
   Serial.println();
-  if((String((char)payload[0]))== "4"){
+  if((String((char)payload[0]))== "3"){
     farbe = 1;
     Serial.println("rot angekommen");
+  }
+  if((String((char)payload[0]))== "4"){
+    farbe = 2;
+    Serial.println("gelb angekommen");
   }
   else if((String((char)payload[0]))== "5"){
     farbe = 3;
@@ -104,7 +108,11 @@ void loop() {
   Serial.println("loop");
   for(int i=0; i<NUMPIXELS; i++) {
     // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
-    if(farbe == 3){
+    if(farbe == 4){
+      pixels.setPixelColor(i, pixels.Color(0, 0, 255));
+      Serial.println("blau");
+    }
+    else if(farbe == 3){
       pixels.setPixelColor(i, pixels.Color(0, 150, 0));
       Serial.println("gruen");
     }
